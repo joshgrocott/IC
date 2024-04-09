@@ -182,8 +182,11 @@ def fit(func, x, y, seed=(), fit_range=None, **kwargs):
                          "Errors must be greater than 0.")
 
     kwargs['absolute_sigma'] = "sigma" in kwargs
+    #print(kwargs)
 
     vals, cov = scipy.optimize.curve_fit(func, x, y, seed, **kwargs)
+    print("func {}".format(func))
+    print("vals {}".format(vals))
 
     fitf       = lambda x: func(x, *vals)
     fitx       = fitf(x)

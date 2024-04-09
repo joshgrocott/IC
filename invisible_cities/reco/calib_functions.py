@@ -201,6 +201,9 @@ def sensor_values(sensor_type, scaler, bins, spectrum, ped_vals):
         lim_ped         = 10000
     elif sensor_type is SensorType.PMT:
         sel             = bins<0
+        a = fitf.gauss(bins[sel], *ped_vals).sum()#100
+        print(a)
+        #scale           = spectrum[sel].sum() / a
         scale           = spectrum[sel].sum() / fitf.gauss(bins[sel], *ped_vals).sum()
         spectra         = spectrum - fitf.gauss(bins, *ped_vals) * scale
         peak_range      = np.arange(10, 20)
@@ -231,12 +234,16 @@ def compute_seeds_from_spectrum(sens_values, bins, ped_vals):
 
     spectra = sens_values.spectra
     p_range = sens_values.peak_range
-    min_b   = sens_values.min_bin_peak
-    max_b   = sens_values.max_bin_peak
+    min_b   = sens_values.min_bin_peak #-100
+    max_b   = sens_values.max_bin_peak #200
     hpw     = sens_values.half_peak_width
     p_seed  = sens_values.p1pe_seed
-
+    print(spectra)
     peaks_dark_led  = find_peaks_cwt(spectra, p_range, min_snr=1, noise_perc=5)
+
+    print(peaks_dark_led)
+    #print((bins[peaks_dark_led]>min_b))
+
     p1pe_samples    = peaks_dark_led[(bins[peaks_dark_led]>min_b) & (bins[peaks_dark_led]<max_b)]
     if len(p1pe_samples) == 0:
         try:

@@ -84,6 +84,12 @@ def phyllis( files_in         : OneOrManyFiles
            , integrals_period : float
            , n_maw            : Optional[int] = 100
            ):
+
+    from invisible_cities.database.load_db import DataPMT
+    db = DataPMT("next100", run_number)
+    eps = 1e-10
+    print(db[(db.coeff_c < eps) | (db.coeff_blr < eps)])
+
     if   proc_mode is PMTCalibMode.gain         : proc = pmt_deconvolver    (detector_db, run_number, n_baseline       )
     elif proc_mode is PMTCalibMode.gain_maw     : proc = pmt_deconvolver_maw(detector_db, run_number, n_baseline, n_maw)
     elif proc_mode is PMTCalibMode.gain_nodeconv: proc = mode_subtractor    (detector_db, run_number)
@@ -144,7 +150,6 @@ def phyllis( files_in         : OneOrManyFiles
         cf.copy_sensor_table(files_in[0], h5out)
 
     return out
-
 
 def pmt_deconvolver(detector_db, run_number, n_baseline):
     deconvolute = deconv_pmt(detector_db, run_number, n_baseline)
